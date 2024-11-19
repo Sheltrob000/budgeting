@@ -54,6 +54,12 @@ fun budget(name: String, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(20.dp))
 
         total(modifier = Modifier)
+
+        Spacer(modifier = Modifier.height(100.dp))
+
+        buttons(modifier = Modifier.align(alignment = Alignment.CenterHorizontally))
+
+        Spacer(modifier = Modifier.height(20.dp))
     }
 
 }
@@ -80,6 +86,26 @@ fun total(modifier: Modifier) {
 
         Button(onClick = { /*TODO*/ }) {
             Text(text = "savings")
+        }
+    }
+}
+
+
+
+@Composable
+fun buttons(modifier: Modifier) {
+
+    Row {
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "add Money",
+                fontSize = 10.sp,
+                modifier = Modifier
+                    .width(30.dp))
+        }
+
+        Button(onClick = { /*TODO*/ }) {
+            Text(text = "subtract Money",
+                fontSize = 10.sp)
         }
     }
 }
