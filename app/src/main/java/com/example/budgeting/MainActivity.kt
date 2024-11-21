@@ -34,8 +34,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             BudgetingTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    budget(
-                        name = "Android",
+                    Budget(
+                        name = "Cool Add Placeholder",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -45,19 +45,19 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun budget(name: String, modifier: Modifier = Modifier) {
+fun Budget(name: String, modifier: Modifier = Modifier) {
     Column {
         Text(
             text = "Hello $name!",
             modifier = modifier
         )
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-        total(modifier = Modifier)
+        Total(modifier = Modifier)
 
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(70.dp))
 
-        buttons(modifier = Modifier.align(alignment = Alignment.CenterHorizontally))
+        Buttons(modifier = Modifier.align(alignment = Alignment.CenterHorizontally))
 
         Spacer(modifier = Modifier.height(20.dp))
     }
@@ -66,25 +66,28 @@ fun budget(name: String, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun total(modifier: Modifier) {
+fun Total(modifier: Modifier) {
     var totalMoney = 0
     Row {
-        Text(text = "$totalMoney",
-            fontSize = 40.sp,
-            color = Color.Black,
-            textAlign = TextAlign.Center,
+        
+        Row(modifier = Modifier
+            .padding(10.dp)) {
+            Text(text = "$totalMoney",
+                fontSize = 37.sp,
+                color = Color.Black,
+                textAlign = TextAlign.Center,
 
-            modifier = modifier
-                .clip(RoundedCornerShape(30.dp))
-                .background(color = Color.Blue)
-                .width(100.dp)
-
-
+                modifier = modifier
+                    .clip(RoundedCornerShape(100.dp))
+                    .background(color = Color.Blue)
+                    .width(100.dp)
             )
+        }
 
-        Spacer(Modifier.width(40.dp))
 
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = { /*TODO*/ },
+            modifier = Modifier
+                .padding(10.dp)) {
             Text(text = "savings")
         }
     }
@@ -93,28 +96,52 @@ fun total(modifier: Modifier) {
 
 
 @Composable
-fun buttons(modifier: Modifier) {
+fun Buttons(modifier: Modifier) {
 
     Row {
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "add Money",
-                fontSize = 10.sp,
+        Button(onClick = { /*TODO*/ },
+            modifier = Modifier
+                .padding(10.dp)) {
+            Text(text = "+",
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
-                    .width(30.dp))
+                    .width(50.dp)
+                    .height(30.dp)
+            )
         }
 
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "subtract Money",
-                fontSize = 10.sp)
+        Button(onClick = { /*TODO*/ },
+            modifier = Modifier
+                .padding(10.dp)) {
+            Text(text = "-",
+                fontSize = 30.sp,
+                textAlign =  TextAlign.Center,
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(30.dp)
+                )
         }
     }
 }
+
+@Composable
+fun Listofsums(modifier: Modifier) {
+
+
+}
+
+
+
+
+
+
 
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     BudgetingTheme {
-        budget("Android")
+        Budget("Android")
     }
 }
