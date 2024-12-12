@@ -12,11 +12,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,10 +52,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Budget(name: String, modifier: Modifier = Modifier) {
     Column {
-        Text(
-            text = "Hello $name!",
-            modifier = modifier
-        )
+
         Spacer(modifier = Modifier.height(10.dp))
 
         Total(modifier = Modifier)
@@ -60,6 +62,8 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
         Buttons(modifier = Modifier.align(alignment = Alignment.CenterHorizontally))
 
         Spacer(modifier = Modifier.height(20.dp))
+
+        ListOfActions(modifier = Modifier)
     }
 
 }
@@ -67,12 +71,15 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun Total(modifier: Modifier) {
-    var totalMoney = 0
+    var totalMoney by remember { mutableIntStateOf(0) }
     Row {
-        
-        Row(modifier = Modifier
-            .padding(10.dp)) {
-            Text(text = "$totalMoney",
+
+        Row(
+            modifier = Modifier
+                .padding(10.dp)
+        ) {
+            Text(
+                text = "$totalMoney",
                 fontSize = 37.sp,
                 color = Color.Black,
                 textAlign = TextAlign.Center,
@@ -85,24 +92,28 @@ fun Total(modifier: Modifier) {
         }
 
 
-        Button(onClick = { /*TODO*/ },
+        Button(
+            onClick = { /*TODO*/ },
             modifier = Modifier
-                .padding(10.dp)) {
+                .padding(10.dp)
+        ) {
             Text(text = "savings")
         }
     }
 }
 
 
-
 @Composable
 fun Buttons(modifier: Modifier) {
 
     Row {
-        Button(onClick = { /*TODO*/ },
+        Button(
+            onClick = { /*TODO*/ },
             modifier = Modifier
-                .padding(10.dp)) {
-            Text(text = "+",
+                .padding(10.dp)
+        ) {
+            Text(
+                text = "+",
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
@@ -111,37 +122,46 @@ fun Buttons(modifier: Modifier) {
             )
         }
 
-        Button(onClick = { /*TODO*/ },
+        Button(
+            onClick = { /*TODO*/ },
             modifier = Modifier
-                .padding(10.dp)) {
-            Text(text = "-",
+                .padding(10.dp)
+        ) {
+            Text(
+                text = "-",
                 fontSize = 30.sp,
-                textAlign =  TextAlign.Center,
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .width(50.dp)
                     .height(30.dp)
-                )
+            )
         }
     }
 }
 
 @Composable
-fun Listofsums(modifier: Modifier) {
+fun ListOfActions(modifier: Modifier) {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .height(100.dp)
+            .width(250.dp)
+            .background(color = Color.Blue)
+            .padding(20.dp)
+            .fillMaxSize(.5f)
+
+
+    ) {
+    }
 
 
 }
-
-
-
-
-
-
 
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     BudgetingTheme {
-        Budget("Android")
+        Budget("woo super add placr")
     }
 }
