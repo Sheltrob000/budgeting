@@ -1,6 +1,7 @@
 package com.example.budgeting
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,17 +56,40 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Budget(name: String, modifier: Modifier = Modifier) {
-    Column (modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    var totalMoney by remember { mutableDoubleStateOf(0.00) }
+    var textAddMoney by remember { mutableStateOf("0.00") }
+    var textSubMoney by remember { mutableStateOf("0.00") }
+    var savingsDeduction by remember { mutableDoubleStateOf(0.0) }
+    var savings by remember { mutableDoubleStateOf(0.00) }
+
+    fun PutMoneyToTotal(numberAdd: Double, numberSub: Double) {
+        var trueNumber = numberAdd * savingsDeduction
+        totalMoney += trueNumber - numberSub
+        savings = numberAdd - trueNumber
+        Log.d("isWorking", "this function is running")
+    }
+
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Total(modifier = Modifier)
+        Total(modifier = Modifier, total = totalMoney)
 
         Spacer(modifier = Modifier.height(70.dp))
 
-//        Buttons(modifier = Modifier.align(alignment = Alignment.CenterHorizontally))
-        TextBoxes()
+        TextBoxes(
+            modifier = Modifier,
+            addMoneyText = textAddMoney,
+            subMoneyText = textSubMoney,
+            onAddMoneyChange = {textAddMoney = it},
+            onSubMoneyChange = {textSubMoney = it},
+            putMoneyToTotal = { PutMoneyToTotal(numberAdd = textAddMoney.toDouble(), numberSub = textSubMoney.toDouble())}
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -75,8 +100,7 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun Total(modifier: Modifier) {
-    var totalMoney by remember { mutableIntStateOf(0) }
+fun Total(modifier: Modifier, total: Double) {
     Row {
 
         Row(
@@ -84,14 +108,14 @@ fun Total(modifier: Modifier) {
                 .padding(10.dp)
         ) {
             Text(
-                text = "$totalMoney",
+                text = "$total",
                 fontSize = 37.sp,
                 color = Color.Black,
                 textAlign = TextAlign.Center,
 
                 modifier = modifier
                     .clip(RoundedCornerShape(100.dp))
-                    .background(color = Color.Blue)
+                    .background(color = Color.Gray)
                     .width(100.dp)
             )
         }
@@ -109,75 +133,43 @@ fun Total(modifier: Modifier) {
 
 
 @Composable
-fun Buttons(modifier: Modifier) {
+fun TextBoxes(
+    modifier: Modifier,
+    addMoneyText: String, onAddMoneyChange: (String) -> Unit,
+    subMoneyText: String, onSubMoneyChange: (String) -> Unit,
+    putMoneyToTotal: () -> Unit
+) {
 
-    Row {
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier
-                .padding(10.dp)
-        ) {
-            Text(
-                text = "+",
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(30.dp)
-            )
-        }
-
-        Button(
-            onClick = { /*TODO*/ },
-            modifier = Modifier
-                .padding(10.dp)
-        ) {
-            Text(
-                text = "-",
-                fontSize = 30.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .width(50.dp)
-                    .height(30.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun TextBoxes() {
-    var textAddMoney by remember { mutableStateOf("0.00") }
-    var textSubMoney by remember { mutableStateOf("0.0") }
 
     Row {
 
         OutlinedTextField(
-            value = textAddMoney,
-            onValueChange = { textAddMoney = it },
+            value = addMoneyText,
+            onValueChange = { onAddMoneyChange },
             label = { Text("+") },
             modifier = Modifier
                 .width(100.dp)
         )
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { putMoneyToTotal },
             modifier = Modifier
                 .padding(10.dp)
         ) {
             Text(
                 text = "Add",
-                fontSize = 30.sp,
+                fontSize = 25.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .width(50.dp)
-                    .height(30.dp)
+                    .height(40.dp)
             )
         }
 
         OutlinedTextField(
-            value = textSubMoney,
-            onValueChange = {textSubMoney = it},
-            label = { Text("-")},
+            value = subMoneyText,
+            onValueChange = { onSubMoneyChange },
+            label = { Text("-") },
             modifier = Modifier
                 .width(100.dp)
         )
@@ -193,13 +185,14 @@ fun ListOfActions(modifier: Modifier) {
         modifier = Modifier
             .height(100.dp)
             .width(250.dp)
-            .background(color = Color.Blue)
+            .background(color = Color.Gray)
             .padding(20.dp)
             .fillMaxSize(.5f)
 
 
     ) {
     }
+
 
 
 }
