@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -64,6 +66,8 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
     var savingsDeduction by remember { mutableDoubleStateOf(0.1) }
     var savings by remember { mutableDoubleStateOf(0.00) }
 
+    var itemList = remember { mutableStateListOf<String>("") }
+
     fun PutMoneyToTotal(numberAdd: Double, numberSub: Double) {
         val trueNumber = numberAdd * (1 - savingsDeduction)
         totalMoney += trueNumber
@@ -71,6 +75,14 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
         savings = numberAdd - trueNumber
         textAddMoney = "0"
         textSubMoney = "0"
+
+        if (trueNumber != 0.0){
+            itemList.add("+ $trueNumber")
+        } else if (numberSub != 0.0){
+            itemList.add("- $numberSub")
+        }
+
+
     }
 
 
@@ -86,21 +98,6 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(70.dp))
 
-//        TextBoxes(
-//            addMoneyText = textAddMoney,
-//            subMoneyText = textSubMoney,
-//            onAddMoneyChange = { textAddMoney = it },
-//            onSubMoneyChange = { textSubMoney = it },
-//            putMoneyToTotal = {
-//                PutMoneyToTotal(
-//                    numberAdd = textAddMoney.toDouble(),
-//                    numberSub = textSubMoney.toDouble()
-//                )
-//            }
-//        )
-
-
-
         NewTextFields(
             moneyToAdd = textAddMoney,
             onAddChange = { textAddMoney = it },
@@ -114,7 +111,7 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        ListOfActions(modifier = Modifier)
+        ListOfActions(modifier = Modifier, itemList)
     }
 
 }
@@ -199,9 +196,10 @@ fun TextBoxes(
 
 
 @Composable
-fun ListOfActions(modifier: Modifier) {
+fun ListOfActions(modifier: Modifier, listTransactions: List<String>) {
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
+        reverseLayout = true,
         modifier = Modifier
             .height(100.dp)
             .width(250.dp)
@@ -211,6 +209,10 @@ fun ListOfActions(modifier: Modifier) {
 
 
     ) {
+        items(listTransactions){
+            transaction -> Text(text = transaction, modifier = Modifier.padding(10.dp))
+
+        }
     }
 }
 
