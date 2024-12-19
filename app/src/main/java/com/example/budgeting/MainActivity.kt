@@ -2,6 +2,7 @@ package com.example.budgeting
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,16 +59,18 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Budget(name: String, modifier: Modifier = Modifier) {
     var totalMoney by remember { mutableDoubleStateOf(0.00) }
-    var textAddMoney by remember { mutableStateOf("") }
-    var textSubMoney by remember { mutableStateOf("") }
-    var savingsDeduction by remember { mutableDoubleStateOf(0.0) }
+    var textAddMoney by remember { mutableStateOf("0") }
+    var textSubMoney by remember { mutableStateOf("0") }
+    var savingsDeduction by remember { mutableDoubleStateOf(0.1) }
     var savings by remember { mutableDoubleStateOf(0.00) }
 
     fun PutMoneyToTotal(numberAdd: Double, numberSub: Double) {
-        val trueNumber = numberAdd * savingsDeduction
-        totalMoney += trueNumber - numberSub
+        val trueNumber = numberAdd * (1 - savingsDeduction)
+        totalMoney += trueNumber
+        totalMoney -= numberSub
         savings = numberAdd - trueNumber
-        Log.d("isWorking", "this function is running")
+        textAddMoney = "0"
+        textSubMoney = "0"
     }
 
 
@@ -94,6 +98,7 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
 //                )
 //            }
 //        )
+
 
 
         NewTextFields(
@@ -132,7 +137,7 @@ fun Total(modifier: Modifier, total: Double) {
                 modifier = modifier
                     .clip(RoundedCornerShape(100.dp))
                     .background(color = Color.Gray)
-                    .width(100.dp)
+                    .width(200.dp)
             )
         }
 
@@ -218,19 +223,15 @@ fun NewTextFields(
     putMoneyToTotal: () -> Unit
 ) {
     Row(modifier = Modifier.padding(16.dp)) {
-//        Text(
-//            text = "Hello, $name",
-//            modifier = Modifier.padding(bottom = 8.dp),
-//            style = MaterialTheme.typography.bodyMedium
-//        )
         OutlinedTextField(
             value = moneyToAdd,
             onValueChange = onAddChange,
             label = { Text("+") },
             modifier = Modifier.width(100.dp)
         )
+
         Button(
-            onClick = { putMoneyToTotal },
+            onClick = putMoneyToTotal,
             modifier = Modifier
                 .padding(10.dp)
         ) {
