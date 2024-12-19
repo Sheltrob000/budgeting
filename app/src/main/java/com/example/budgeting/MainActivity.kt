@@ -23,9 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,13 +57,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Budget(name: String, modifier: Modifier = Modifier) {
     var totalMoney by remember { mutableDoubleStateOf(0.00) }
-    var textAddMoney by remember { mutableStateOf("0.00") }
-    var textSubMoney by remember { mutableStateOf("0.00") }
+    var textAddMoney by remember { mutableStateOf("") }
+    var textSubMoney by remember { mutableStateOf("") }
     var savingsDeduction by remember { mutableDoubleStateOf(0.0) }
     var savings by remember { mutableDoubleStateOf(0.00) }
 
     fun PutMoneyToTotal(numberAdd: Double, numberSub: Double) {
-        var trueNumber = numberAdd * savingsDeduction
+        val trueNumber = numberAdd * savingsDeduction
         totalMoney += trueNumber - numberSub
         savings = numberAdd - trueNumber
         Log.d("isWorking", "this function is running")
@@ -82,14 +82,30 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(70.dp))
 
-        TextBoxes(
-            modifier = Modifier,
-            addMoneyText = textAddMoney,
-            subMoneyText = textSubMoney,
-            onAddMoneyChange = {textAddMoney = it},
-            onSubMoneyChange = {textSubMoney = it},
-            putMoneyToTotal = { PutMoneyToTotal(numberAdd = textAddMoney.toDouble(), numberSub = textSubMoney.toDouble())}
-        )
+//        TextBoxes(
+//            addMoneyText = textAddMoney,
+//            subMoneyText = textSubMoney,
+//            onAddMoneyChange = { textAddMoney = it },
+//            onSubMoneyChange = { textSubMoney = it },
+//            putMoneyToTotal = {
+//                PutMoneyToTotal(
+//                    numberAdd = textAddMoney.toDouble(),
+//                    numberSub = textSubMoney.toDouble()
+//                )
+//            }
+//        )
+
+
+        NewTextFields(
+            moneyToAdd = textAddMoney,
+            onAddChange = { textAddMoney = it },
+            moneyToSub = textSubMoney,
+            onSubChange = { textSubMoney = it },
+            putMoneyToTotal = {
+                PutMoneyToTotal(
+                    numberAdd = textAddMoney.toDouble(),
+                    numberSub = textSubMoney.toDouble()) }
+            )
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -134,7 +150,6 @@ fun Total(modifier: Modifier, total: Double) {
 
 @Composable
 fun TextBoxes(
-    modifier: Modifier,
     addMoneyText: String, onAddMoneyChange: (String) -> Unit,
     subMoneyText: String, onSubMoneyChange: (String) -> Unit,
     putMoneyToTotal: () -> Unit
@@ -192,9 +207,49 @@ fun ListOfActions(modifier: Modifier) {
 
     ) {
     }
+}
 
-
-
+@Composable
+fun NewTextFields(
+    moneyToAdd: String,
+    onAddChange: (String) -> Unit,
+    moneyToSub: String,
+    onSubChange: (String) -> Unit,
+    putMoneyToTotal: () -> Unit
+) {
+    Row(modifier = Modifier.padding(16.dp)) {
+//        Text(
+//            text = "Hello, $name",
+//            modifier = Modifier.padding(bottom = 8.dp),
+//            style = MaterialTheme.typography.bodyMedium
+//        )
+        OutlinedTextField(
+            value = moneyToAdd,
+            onValueChange = onAddChange,
+            label = { Text("+") },
+            modifier = Modifier.width(100.dp)
+        )
+        Button(
+            onClick = { putMoneyToTotal },
+            modifier = Modifier
+                .padding(10.dp)
+        ) {
+            Text(
+                text = "Add",
+                fontSize = 25.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(40.dp)
+            )
+        }
+        OutlinedTextField(
+            value = moneyToSub,
+            onValueChange = onSubChange,
+            label = { Text("-") },
+            modifier = Modifier.width(100.dp)
+        )
+    }
 }
 
 
