@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,14 +17,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -61,16 +65,26 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
     var totalMoney by remember { mutableDoubleStateOf(0.00) }
     var textAddMoney by remember { mutableStateOf("0") }
     var textSubMoney by remember { mutableStateOf("0") }
-    var savingsDeduction by remember { mutableDoubleStateOf(0.1) }
+    var savingsDeduction by remember { mutableDoubleStateOf(0.2) }
     var savings by remember { mutableDoubleStateOf(0.00) }
+    var showPopup by remember { mutableStateOf(false) }
+
+    var itemList = remember { mutableStateListOf<String>("") }
+
 
     fun PutMoneyToTotal(numberAdd: Double, numberSub: Double) {
         val trueNumber = numberAdd * (1 - savingsDeduction)
         totalMoney += trueNumber
         totalMoney -= numberSub
-        savings = numberAdd - trueNumber
+        savings += numberAdd - trueNumber
         textAddMoney = "0"
         textSubMoney = "0"
+
+        if (trueNumber != 0.0){
+            itemList.add("+ $trueNumber")
+        } else if (numberSub != 0.0){
+            itemList.add("- $numberSub")
+        }
     }
 
 
@@ -82,24 +96,11 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Total(modifier = Modifier, total = totalMoney)
+        Total(modifier = Modifier, total = totalMoney, setTrue = {showPopup = !showPopup})
 
         Spacer(modifier = Modifier.height(70.dp))
 
-//        TextBoxes(
-//            addMoneyText = textAddMoney,
-//            subMoneyText = textSubMoney,
-//            onAddMoneyChange = { textAddMoney = it },
-//            onSubMoneyChange = { textSubMoney = it },
-//            putMoneyToTotal = {
-//                PutMoneyToTotal(
-//                    numberAdd = textAddMoney.toDouble(),
-//                    numberSub = textSubMoney.toDouble()
-//                )
-//            }
-//        )
-
-
+        Popup(modifier = Modifier.fillMaxSize(), showPopup = showPopup, savings = savings.toString(), savingsdeduction = savingsDeduction)
 
         NewTextFields(
             moneyToAdd = textAddMoney,
@@ -114,14 +115,17 @@ fun Budget(name: String, modifier: Modifier = Modifier) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        ListOfActions(modifier = Modifier)
+        ListOfActions(modifier = Modifier, itemList)
+
     }
+
+
 
 }
 
 
 @Composable
-fun Total(modifier: Modifier, total: Double) {
+fun Total(modifier: Modifier, total: Double, setTrue: () -> Unit) {
     Row {
 
         Row(
@@ -143,7 +147,7 @@ fun Total(modifier: Modifier, total: Double) {
 
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick =setTrue,
             modifier = Modifier
                 .padding(10.dp)
         ) {
@@ -199,11 +203,13 @@ fun TextBoxes(
 
 
 @Composable
-fun ListOfActions(modifier: Modifier) {
+fun ListOfActions(modifier: Modifier, listTransactions: List<String>) {
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top,
+        reverseLayout = true,
         modifier = Modifier
-            .height(100.dp)
+            .height(200.dp)
             .width(250.dp)
             .background(color = Color.Gray)
             .padding(20.dp)
@@ -211,8 +217,13 @@ fun ListOfActions(modifier: Modifier) {
 
 
     ) {
+        items(listTransactions){
+                transaction -> Text(text = transaction, modifier = Modifier.padding(10.dp))
+
+        }
     }
 }
+
 
 @Composable
 fun NewTextFields(
@@ -251,6 +262,39 @@ fun NewTextFields(
             modifier = Modifier.width(100.dp)
         )
     }
+}
+
+@Composable
+fun Popup (modifier: Modifier, showPopup: Boolean, savings: String, savingsdeduction: Double,) {
+    if (showPopup) {
+        Box(
+            Modifier
+                .width(250.dp)
+                .height(100.dp)
+                .background(Color.White)
+                .clip(RoundedCornerShape(4.dp))
+                .background(Color.Gray),
+            contentAlignment = Alignment.Center,
+
+
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "savings")
+                Text(text = savings)
+                Text(text = "persent sent to savings = $savingsdeduction")
+            }
+        }
+    }
+
+    if (!showPopup){
+        Spacer(Modifier.height(100.dp))
+    }
+
+
 }
 
 
